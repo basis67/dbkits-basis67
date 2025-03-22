@@ -1,0 +1,46 @@
+# 代码生成器配置
+generator:
+  config-path: src/main/resources/generatorConfig.xml
+
+spring:
+  application:
+    name: "db-scaffold"
+  # MySQL数据库配置
+  datasource:
+    url: "jdbc:mysql://mysql-db:3306/devtest?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8"
+    username: "devtest"
+    password: "devtest123456"
+  data:
+    # MongoDB数据库配置
+    mongodb:
+      host: "mongo-db"
+      port: 27017
+      database: "devtest"
+#      username: "admin"
+#      password: "admin"
+
+# 业务配置
+openapi:
+  restapi:
+    base-path: "/api/v1/"
+
+server:
+  port: 8080
+
+# JVM管理模块配置
+management:
+  server:
+    port: 9090
+  endpoints:
+    web:
+      exposure:
+        include:
+          - "openapi"
+          - "swagger-ui"
+
+# Swagger文档配置
+springdoc:
+  # display spring-boot-actuator endpoints
+  show-actuator: true
+  # 将Swagger UI移动到management port（http://localhost:9090/actuator/swagger-ui/）
+  # use-management-port: true
