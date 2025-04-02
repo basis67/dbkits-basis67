@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: "dbkits-generator"
+  # MySQL数据库配置
+  datasource:
+    url: "jdbc:mysql://localhost:3306/devtest?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8"
+    username: "devtest"
+    password: "devtest123456"
+
+# 代码生成器配置
+generator:
+  base-package: com.basis67.dbkits
+  author: percent73
+  output-dir: src/main/java
+  # MyBatis生成器API接口配置
+  config-path: src/main/resources/generatorConfig.xml
+
+# 业务配置
+openapi:
+  restapi:
+    base-path: "/api/v1/"
+
+server:
+  port: 8081

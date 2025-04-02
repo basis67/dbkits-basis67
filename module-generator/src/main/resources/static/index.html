@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数据库脚手架生成器</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { display: flex; gap: 20px; }
+        .table-list { width: 300px; }
+        .table-details { flex: 1; }
+        .generator-section { width: 400px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        pre { background: #f4f4f4; padding: 10px; border-radius: 5px; }
+        .section { margin-bottom: 20px; border: 1px solid #ddd; padding: 15px; border-radius: 5px; }
+        button { padding: 8px 16px; cursor: pointer; background: #4CAF50; color: white; border: none; border-radius: 4px; }
+        button:hover { background: #45a049; }
+    </style>
+</head>
+<body>
+<h1>数据库脚手架生成器</h1>
+
+<div class="container">
+    <div class="table-list section">
+        <h2>数据库表列表</h2>
+        <div id="tables"></div>
+    </div>
+
+    <div class="table-details section">
+        <h2>表详情</h2>
+        <div id="tableDetail"></div>
+    </div>
+
+    <div class="generator-section section">
+        <h2>代码生成</h2>
+        <input type="text" id="templateName" placeholder="模板名称" value="dto.ftl" style="width: 100%; margin-bottom: 10px;">
+        <button onclick="generateCode()">生成代码</button>
+        <h3>生成结果：</h3>
+        <pre id="output"></pre>
+    </div>
+</div>
+
+<script>
+    let apiBasePath = '/api/v1';
+
+    let currentTable = null;
+
+    // 加载表数据
+    async function loadTables() {
+        try {
+            const response = await fetch(apiBasePath+'/generator/dbMeta');
+            const { data } = await response.json();
+            renderTables(data);
+        } catch (error) {
+            alert('加载表数据失败: ' + error.message);
+        }
+    }
+
+    // 渲染表列表
+    function renderTables(tables) {
+        const container = document.getElementById('tables');
+        container.innerHTML = tables.map(table => `
+            <div style="padding: 5px; cursor: pointer;"
+                 onclick="showTableDetail(${JSON.stringify(table).replace(/"/g, '&quot;')})">
+                ${table.tableName} (${table.className})
+            </div>
+        `).join('');
+    }
+
+    // 显示表详情
+    function showTableDetail(table) {
+        currentTable = table;
+        const container = document.getElementById('tableDetail');
+        container.innerHTML = `
+            <h3>${table.tableName} (${table.className})</h3>
+            <p>主键: ${table.primaryKey.columnName} (${table.primaryKey.javaType})</p>
+            <table>
+                <tr>
+                    <th>列名</th>
+                    <th>字段名</th>
+                    <th>类型</th>
+                    <th>注释</th>
+                    <th>可空</th>
+                </tr>
+                ${table.columns.map(col => `
+                    <tr>
+                        <td>${col.columnName}</td>
+                        <td>${col.javaField}</td>
+                        <td>${col.javaType}</td>
+                        <td>${col.comment || ''}</td>
+                        <td>${col.nullable ? '是' : '否'}</td>
+                    </tr>
+                `).join('')}
+            </table>
+        `;
+    }
+
+    // 生成代码
+    async function generateCode() {
+        if (!currentTable) {
+            alert('请先选择表');
+            return;
+        }
+
+        const templateName = document.getElementById('templateName').value;
+        if (!templateName) {
+            alert('请输入模板名称');
+            return;
+        }
+
+        try {
+            const response = await fetch(apiBasePath+'/generator/genFromTableMeta', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    templateName: templateName,
+                    tableMeta: currentTable
+                })
+            });
+
+            const { data } = await response.json();
+            document.getElementById('output').textContent = data;
+        } catch (error) {
+            alert('生成代码失败: ' + error.message);
+        }
+    }
+
+    // 初始化加载表数据
+    loadTables();
+</script>
+</body>
+</html>

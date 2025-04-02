@@ -1,4 +1,4 @@
-package com.basis67.dbkits.exception;
+package com.basis67.dbkits.generator.exception;
 
 public class CodeGeneratorException extends Exception {
 

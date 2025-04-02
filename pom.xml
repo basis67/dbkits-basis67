@@ -9,9 +9,16 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.basis67</groupId>
-    <artifactId>db-scaffold</artifactId>
+    <artifactId>dbkits</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>db-scaffold</name>
+    <packaging>pom</packaging>
+    <modules>
+        <module>module-generator</module>
+        <module>module-common</module>
+        <module>project-demo</module>
+    </modules>
+
+    <name>dbkits</name>
     <description>Demo project for Spring Boot and Swagger with DB Scaffold</description>
     <url/>
     <licenses>
@@ -28,6 +35,7 @@
     </scm>
     <properties>
         <java.version>17</java.version>
+
         <springdoc.version>2.8.5</springdoc.version>
         <pagehelper.version>2.1.0</pagehelper.version>
         <mybatis.version>3.0.4</mybatis.version>
@@ -56,6 +64,14 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- 引入Spring Boot DevTools -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
 
